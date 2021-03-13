@@ -1,113 +1,130 @@
 package com.devsuperior.dscatalog.entities;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 @Entity
 @Table(name = "tb_product")
-public class Product {
+public class Product implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    //Assim mapeia como blob, e não varchar. Usar para textos longos
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private Double price;
-    private String imgUrl;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String name;
+	
+	@Column(columnDefinition = "TEXT")
+	private String description;
+	private Double price;
+	private String imgUrl;
+	
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant date;
+	
+	@ManyToMany
+	@JoinTable(name = "tb_product_category",
+		joinColumns = @JoinColumn(name = "product_id"),
+		inverseJoinColumns = @JoinColumn(name = "category_id"))	
+	Set<Category> categories = new HashSet<>();
+	
+	public Product() {
+	}
 
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant date;
+	public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.imgUrl = imgUrl;
+		this.date = date;
+	}
 
-    @ManyToMany
-    //Indica que é o atributo que representa a junção das classes
-    @JoinTable(name = "tb_product_category",
-            //Estabelece qual será a chave estrangeira referente à classe atual
-            joinColumns = @JoinColumn(name = "product_id"),
-            //Estabelece quem faz as outras chaves estrangeiras
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories = new HashSet<>();
+	public Long getId() {
+		return id;
+	}
 
-    public Product() {
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imgUrl = imgUrl;
-        this.date = date;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Double getPrice() {
+		return price;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setPrice(Double price) {
+		this.price = price;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getImgUrl() {
+		return imgUrl;
+	}
 
-    public Double getPrice() {
-        return price;
-    }
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
+	public Instant getDate() {
+		return date;
+	}
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
+	public void setDate(Instant date) {
+		this.date = date;
+	}
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
+	public Set<Category> getCategories() {
+		return categories;
+	}
 
-    public Instant getDate() {
-        return date;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
 
-    public void setDate(Instant date) {
-        this.date = date;
-    }
-
-    public Set<Category> getCategories() {
-        return categories;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Product product = (Product) o;
-
-        return id.equals(product.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}	
 }
